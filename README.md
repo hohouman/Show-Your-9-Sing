@@ -2,11 +2,11 @@
 
 > **Just Sing, No Config.**
 >
-> A minimalist, zero-config static music player designed to showcase your karaoke recordings. It automatically builds playlists from your `src` folder and supports SPA routing (direct links to songs).  
+> A minimalist, zero-config static music player page designed to showcase your karaoke recordings. It automatically builds playlists from your `src` folder and supports SPA routing (direct links to songs).  
   
 > **是但唱，唔使烦。**
 >
-> 一个超轻量级的静态 H5 音乐播放器，专门用来展示你的 K 歌录音。自动扫描目录生成歌单，支持路由直达（分享链接直接播放对应歌曲）。
+> 一个超轻量级的静态 H5 音乐播放页面，专门用来展示你的 K 歌录音。自动扫描`src`目录生成歌单，支持路由直达（分享链接直接播放对应歌曲）。
 
 ---
 
