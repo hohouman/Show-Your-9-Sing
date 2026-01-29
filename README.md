@@ -54,10 +54,10 @@ Simply place your audio (`.mp3`/`.m4a`) and lyrics (`.txt`) in the `src` folder:
 
 ---
 
-## ⚙️ Configuration / 个性化配置
+## ⚙️ Configuration / 配置
 
 To change your Avatar and Nickname, edit the section of `index.html`:  
-要修改头像和昵称，请编辑 `index.html` 的配置区：
+要修改头像和昵称，请编辑 `index.html` 的配置：
 
 ```javascript
 const AVATAR_URL = "./favicon.ico";
@@ -68,7 +68,7 @@ const HOME_PAGE_URL = "https://your-blog.com";
 
 ---
 
-## 🚀 Deployment / 部署教程
+## 🚀 Deployment / 部署
 
 ### Cloudflare Pages (Recommended / 推荐)
 
