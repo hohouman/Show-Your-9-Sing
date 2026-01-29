@@ -128,7 +128,7 @@
             // 1. 播放音频 (使用 list.json 里记录的完整文件名)
             titleEl.innerText = song.title;
             audioEl.src = `./src/${song.file}`;
-            audioEl.play().catch(() => {});
+            // audioEl.play().catch(() => {});
 
             // 2. 加载歌词 (假设歌词和音频同名，且为 .txt)
             lyricsEl.innerText = "正在读取歌词...";
@@ -146,4 +146,5 @@
 </body>
 
 </html>
+
 
