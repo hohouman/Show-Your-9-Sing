@@ -68,82 +68,14 @@ const HOME_PAGE_URL = "https://leidun.pp.ua";
 
 ## 🚀 Deployment / 部署
 
-### Option 1: Cloudflare Pages (Recommended / 推荐)
+### Cloudflare Pages (Recommended / 推荐)
 
 *Best for automation. The list updates automatically when you push code.*  
 *最推荐，自动化程度高，代码推送后自动更新歌单。*
 
-1. Log in to **Cloudflare Dashboard** -> **Pages** -> **Connect to Git**.
-2. Select this repository.
-3. **Build Settings (构建设置)**:
-* **Build command (构建命令)**: `node scan.js`
-* **Build output directory (输出目录)**: `.` (Enter a single dot / 输入一个点)
-
-
+1. Log in to **Cloudflare Dashboard** -> **Pages** -> **Connect to Git**.  
+2. Select this repository.  
+3. **Build Settings (构建设置)**:  
+* **Build command (构建命令)**: `node scan.js`  
+* **Build output directory (输出目录)**: `.` (Enter a single dot / 输入一个点)  
 4. Click **Save and Deploy**.
-
-### Option 2: Vercel
-
-*Very stable and fast. Similar to Cloudflare.*  
-*非常稳定，速度快，设置与 Cloudflare 类似。*
-
-1. Log in to **Vercel** -> **Add New...** -> **Project**.
-2. Import this repository.
-3. **Build & Development Settings**:
-* **Build Command**: `node scan.js`
-* **Output Directory**: `.` (Enter a single dot / 输入一个点)
-
-
-4. Click **Deploy**.
-
-### Option 3: GitHub Pages
-
-*Since GitHub Pages is purely static, we use GitHub Actions to run the scan script.*  
-*GitHub Pages 默认是纯静态的，我们需要使用 GitHub Actions 来运行扫描脚本。*  
-
-1. Create a file at `.github/workflows/deploy.yml`.  
-在仓库新建文件 `.github/workflows/deploy.yml`。  
-2. Paste the content below into the file:  
-将以下内容粘贴到文件中：
-
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: ["main"]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: Generate Playlist
-        run: node scan.js
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-```
-
-  3. Go to Repo **Settings** -> **Pages** -> Select **Source**: `GitHub Actions`.  
-  进入仓库 **Settings** -> **Pages** -> 将 **Source** 改为 `GitHub Actions`。
