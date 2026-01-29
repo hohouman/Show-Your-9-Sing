@@ -16,8 +16,6 @@
     <br>**自动歌单**：无需手写 JSON。上传音频，构建时脚本自动生成列表。
 * **🔗 Deep Linking**: Supports direct links like `your-domain.com/SongName`. Share a specific song easily.
     <br>**路由直达**：支持 `域名/歌名` 直接访问。分享链接给朋友，点开即听。
-* **📱 Mobile First**: App-like experience with a drawer menu and sticky player.
-    <br>**手机端优化**：抽屉式歌单、吸顶播放器，接近原生 App 的体验。
 * **📜 Lyrics Sync**: Automatically loads `.txt` lyrics with the same filename.
     <br>**歌词同步**：自动展示与音频同名的 `.txt` 歌词文本。
 
@@ -64,7 +62,7 @@ To change your Avatar and Nickname, edit the section of `index.html`:
 ```javascript
 const AVATAR_URL = "./favicon.ico";
 const NICKNAME = "My Name";
-const HOME_PAGE_URL = "[https://your-blog.com](https://your-blog.com)";
+const HOME_PAGE_URL = "https://your-blog.com";
 
 ```
 
