@@ -43,13 +43,10 @@
         }
         .home-link:hover { background: var(--accent); color: #fff; }
 
-        /* 侧边栏列表：滚动条出现在侧边栏的最右边 */
         .song-list { 
             flex: 1; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch; 
-            
-            /* 美化滚动条 */
             scrollbar-width: thin;
             scrollbar-color: #eee transparent;
         }
@@ -76,20 +73,17 @@
         }
         .repo-link:hover { color: #333; }
 
-        /* --- 主区域 (关键修改) --- */
+        /* --- 主区域 --- */
         .main {
             flex: 1; 
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            /* 关键点：让 .main 负责滚动，这样滚动条就在屏幕最右边 */
             overflow-y: auto; 
             overflow-x: hidden;
             height: 100vh; 
             position: relative; 
             width: 100%;
-            
-            /* 美化右侧主滚动条 */
             scrollbar-width: thin;
             scrollbar-color: #ddd transparent;
         }
@@ -106,42 +100,33 @@
             padding: 8px; cursor: pointer; backdrop-filter: blur(5px);
         }
 
-        /* 顶部播放器 (关键修改) */
         .sticky-header {
             width: 100%; 
             max-width: 500px; 
             text-align: center;
-            background: var(--bg); /* 必须有背景色，否则歌词会透视 */
-            
-            /* 关键点：恢复 sticky，让它吸附在顶部 */
+            background: var(--bg);
             position: sticky;
             top: 0;
-            
             z-index: 10; 
             padding-top: 60px; 
             padding-bottom: 20px; 
-            margin: 0 auto; /* 确保居中 */
+            margin: 0 auto;
         }
         
         h2 { margin-bottom: 20px; font-weight: normal; font-size: 1.6rem; padding: 0 10px; }
         audio { width: 90%; height: 40px; outline: none; }
         
-        /* 歌词区域 (关键修改) */
+        /* 歌词区域修改：去除了 mask-image */
         .lyrics {
-            /* 移除 overflow-y: auto，不再内部滚动 */
             width: 100%; 
             max-width: 500px;
             text-align: center; 
             line-height: 2.2; 
             color: #666; 
             white-space: pre-wrap; 
-            
-            /* 底部留足空间，防止最后一句被遮挡 */
             padding: 20px 20px 100px 20px; 
             
-            /* 只需要底部渐隐，顶部由 sticky header 遮挡 */
-            -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+            /* 移除了之前的渐隐遮罩代码 */
         }
 
         .overlay {
@@ -159,7 +144,6 @@
             }
             .sidebar.open { transform: translateX(0); }
             .menu-btn { display: block; }
-            /* 移动端头部调整 */
             .sticky-header { padding-top: 80px; }
             .sidebar-footer { display: block; } 
         }
@@ -238,12 +222,24 @@
                 }
                 renderList(songs);
 
-                // 自动加载第一首
-                if (songs.length > 0) {
-                    const firstEl = listEl.children[0];
-                    if (firstEl) {
-                        play(songs[0], firstEl);
-                    }
+                // --- 路由逻辑：解析 URL ---
+                // 获取路径，去掉开头的 "/" 并解码 (e.g. "/十年" -> "十年")
+                const pathName = decodeURIComponent(window.location.pathname.substring(1));
+                
+                let songToPlay = songs[0]; // 默认第一首
+                let targetDiv = listEl.children[0];
+
+                // 如果 URL 有歌名，且歌名在列表中
+                const foundSong = songs.find(s => s.title === pathName);
+                if (foundSong) {
+                    songToPlay = foundSong;
+                    // 找到对应的 div 索引
+                    const index = songs.findIndex(s => s.title === pathName);
+                    targetDiv = listEl.children[index];
+                }
+
+                if (songToPlay) {
+                    play(songToPlay, targetDiv);
                 }
             })
             .catch(() => {
@@ -258,6 +254,8 @@
                 div.innerText = song.title; 
                 div.onclick = () => {
                     play(song, div);
+                    // 点击更新 URL，但不刷新页面
+                    history.pushState(null, '', '/' + song.title);
                     if (window.innerWidth <= 768) {
                         toggleMenu();
                     }
@@ -267,13 +265,13 @@
         }
 
         function play(song, el) {
-            document.querySelectorAll('.song-item').forEach(d => d.classList.remove('active'));
-            el.classList.add('active');
+            if(el) {
+                document.querySelectorAll('.song-item').forEach(d => d.classList.remove('active'));
+                el.classList.add('active');
+            }
             
             titleEl.innerText = song.title;
             audioEl.src = `./src/${song.file}`;
-            
-            // 默认不调用 audioEl.play()
             
             lyricsEl.innerText = "正在读取歌词...";
             const lyricFileName = song.title + ".txt"; 
@@ -286,7 +284,13 @@
                 .then(text => lyricsEl.innerText = text)
                 .catch(() => lyricsEl.innerText = "（未找到同名 .txt 歌词文件）");
         }
+
+        // 监听浏览器“后退”按钮
+        window.onpopstate = function() {
+            const pathName = decodeURIComponent(window.location.pathname.substring(1));
+            // 简单刷新页面来处理后退，或者重新执行查找逻辑
+            window.location.reload();
+        };
     </script>
 </body>
 </html>
-
