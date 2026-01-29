@@ -1,9 +1,8 @@
-# 🎤 Show Your 9 Sing (是但9sing)
-
-[English](https://www.google.com/search?q=%23-english) | [中文说明](https://www.google.com/search?q=%23-%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E)
+# 🎤 Show Your 9 Sing (是9但唱)
 
 > **Just Sing, No Config.**
 > A lightweight, static H5 music player designed to showcase your karaoke recordings. It automatically scans your folder and generates a playlist during the build process.
+  
 > **是但唱，唔使烦。**
 > 一个超轻量级的静态 H5 音乐播放器，专门用来展示你的 K 歌录音。它会在构建时自动扫描目录并生成歌单，主打一个“懒人维护”。
 
@@ -60,8 +59,8 @@ Simply place your files in the `src` folder:
 
 ## ⚙️ Configuration / 个性化配置
 
-To change your Avatar and Nickname, edit the top section of `index.html`:
-要修改头像和昵称，请编辑 `index.html` 顶部的配置区：
+To change your Avatar and Nickname, edit the section of `index.html`:
+要修改头像和昵称，请编辑 `index.html` 的配置：
 
 ```javascript
 // index.html
