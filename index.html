@@ -24,10 +24,8 @@
         }
 
         .profile {
-            padding: 30px 20px 20px 20px;
-            text-align: center; 
-            border-bottom: 1px solid #f5f5f5;
-            background-color: #fff;
+            padding: 30px 20px 20px 20px; text-align: center; 
+            border-bottom: 1px solid #f5f5f5; background-color: #fff;
         }
         .avatar {
             width: 80px; height: 80px; border-radius: 50%;
@@ -44,17 +42,12 @@
         .home-link:hover { background: var(--accent); color: #fff; }
 
         .song-list { 
-            flex: 1; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: thin;
-            scrollbar-color: #eee transparent;
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; 
+            scrollbar-width: thin; scrollbar-color: #eee transparent;
         }
-        
         .song-list::-webkit-scrollbar { width: 4px; }
         .song-list::-webkit-scrollbar-track { background: transparent; }
         .song-list::-webkit-scrollbar-thumb { background-color: #eee; border-radius: 4px; }
-        .song-list::-webkit-scrollbar-thumb:hover { background-color: #ddd; }
 
         .song-item {
             padding: 16px 24px; cursor: pointer; font-size: 15px; color: #555;
@@ -73,25 +66,17 @@
         }
         .repo-link:hover { color: #333; }
 
-        /* --- 主区域 --- */
+        /* --- 主区域 (布局重构：Flex Column) --- */
         .main {
             flex: 1; 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: column; /* 垂直排列 */
             align-items: center;
-            overflow-y: auto; 
-            overflow-x: hidden;
             height: 100vh; 
             position: relative; 
             width: 100%;
-            scrollbar-width: thin;
-            scrollbar-color: #ddd transparent;
+            overflow: hidden; /* 禁止主容器滚动，交给子元素 */
         }
-
-        .main::-webkit-scrollbar { width: 8px; }
-        .main::-webkit-scrollbar-track { background: transparent; }
-        .main::-webkit-scrollbar-thumb { background-color: #ddd; border-radius: 4px; }
-        .main::-webkit-scrollbar-thumb:hover { background-color: #ccc; }
 
         .menu-btn {
             display: none; position: absolute; left: 20px; top: 20px;
@@ -100,34 +85,47 @@
             padding: 8px; cursor: pointer; backdrop-filter: blur(5px);
         }
 
-        .sticky-header {
+        /* 顶部播放器 (固定高度，不滚动) */
+        .player-header {
             width: 100%; 
-            max-width: 500px; 
+            max-width: 600px; 
             text-align: center;
             background: var(--bg);
-            position: sticky;
-            top: 0;
-            z-index: 10; 
+            flex-shrink: 0; /* 防止被压缩 */
+            z-index: 20; 
             padding-top: 60px; 
-            padding-bottom: 20px; 
+            padding-bottom: 10px; 
             margin: 0 auto;
+            /* 增加一点下分割线，让区域更分明 */
+            /* border-bottom: 1px solid rgba(0,0,0,0.05); */
         }
         
         h2 { margin-bottom: 20px; font-weight: normal; font-size: 1.6rem; padding: 0 10px; }
         audio { width: 90%; height: 40px; outline: none; }
         
-        /* 歌词区域修改：去除了 mask-image */
+        /* 歌词区域 (独立滚动) */
         .lyrics {
+            flex: 1; /* 占据剩余所有空间 */
             width: 100%; 
-            max-width: 500px;
+            max-width: 600px;
             text-align: center; 
             line-height: 2.2; 
             color: #666; 
             white-space: pre-wrap; 
             padding: 20px 20px 100px 20px; 
             
-            /* 移除了之前的渐隐遮罩代码 */
+            /* 开启独立滚动 */
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+
+            /* 美化滚动条 */
+            scrollbar-width: thin;
+            scrollbar-color: #ddd transparent;
         }
+        /* 滚动条只在歌词区域显示，不会延伸到播放器 */
+        .lyrics::-webkit-scrollbar { width: 6px; }
+        .lyrics::-webkit-scrollbar-track { background: transparent; }
+        .lyrics::-webkit-scrollbar-thumb { background-color: #ddd; border-radius: 4px; }
 
         .overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -144,7 +142,8 @@
             }
             .sidebar.open { transform: translateX(0); }
             .menu-btn { display: block; }
-            .sticky-header { padding-top: 80px; }
+            /* 移动端增加头部留白 */
+            .player-header { padding-top: 80px; }
             .sidebar-footer { display: block; } 
         }
     </style>
@@ -179,7 +178,7 @@
     </aside>
 
     <main class="main">
-        <div class="sticky-header">
+        <div class="player-header">
             <h2 id="title">Loading...</h2>
             <audio id="audio" controls></audio>
         </div>
@@ -222,18 +221,14 @@
                 }
                 renderList(songs);
 
-                // --- 路由逻辑：解析 URL ---
-                // 获取路径，去掉开头的 "/" 并解码 (e.g. "/十年" -> "十年")
+                // 路由逻辑
                 const pathName = decodeURIComponent(window.location.pathname.substring(1));
-                
-                let songToPlay = songs[0]; // 默认第一首
+                let songToPlay = songs[0]; 
                 let targetDiv = listEl.children[0];
 
-                // 如果 URL 有歌名，且歌名在列表中
                 const foundSong = songs.find(s => s.title === pathName);
                 if (foundSong) {
                     songToPlay = foundSong;
-                    // 找到对应的 div 索引
                     const index = songs.findIndex(s => s.title === pathName);
                     targetDiv = listEl.children[index];
                 }
@@ -254,7 +249,6 @@
                 div.innerText = song.title; 
                 div.onclick = () => {
                     play(song, div);
-                    // 点击更新 URL，但不刷新页面
                     history.pushState(null, '', '/' + song.title);
                     if (window.innerWidth <= 768) {
                         toggleMenu();
@@ -271,24 +265,35 @@
             }
             
             titleEl.innerText = song.title;
-            audioEl.src = `./src/${song.file}`;
             
+            // 🔥 修复 iOS Safari 播放错误：对文件名进行编码
+            // 处理中文、空格等特殊字符
+            const encodedFile = encodeURIComponent(song.file);
+            audioEl.src = `./src/${encodedFile}`;
+            
+            // 🔥 修复切换歌曲状态错误：显式重置加载
+            audioEl.load();
+
             lyricsEl.innerText = "正在读取歌词...";
-            const lyricFileName = song.title + ".txt"; 
+            
+            // 歌词请求也需要编码
+            const lyricFileName = encodeURIComponent(song.title + ".txt");
             
             fetch(`./src/${lyricFileName}`)
                 .then(res => {
                     if (res.ok) return res.text();
                     throw new Error("无歌词");
                 })
-                .then(text => lyricsEl.innerText = text)
+                .then(text => {
+                    lyricsEl.innerText = text;
+                    // 切换歌曲后，歌词滚动回顶部
+                    lyricsEl.scrollTop = 0;
+                })
                 .catch(() => lyricsEl.innerText = "（未找到同名 .txt 歌词文件）");
         }
 
-        // 监听浏览器“后退”按钮
+        // 监听浏览器后退
         window.onpopstate = function() {
-            const pathName = decodeURIComponent(window.location.pathname.substring(1));
-            // 简单刷新页面来处理后退，或者重新执行查找逻辑
             window.location.reload();
         };
     </script>
